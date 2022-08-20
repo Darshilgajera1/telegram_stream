@@ -6,3 +6,7 @@ CHECK_TWITTER_USERNAME = """SELECT user_name
                              AND author_id = '{author_id}'"""
 GET_ALL_USER = """SELECT user_name FROM innit.twitter_stream_user"""
 GET_ALL_GROUP_CHAT_ID = """SELECT group_chat_id FROM innit.twitter_stream_user WHERE author_id='{author_id}' """
+GET_USER_CONFIG = """SELECT user_name FROM innit.twitter_stream_user WHERE group_chat_id='{chat_id}'"""
+DELETE_USER = """DELETE FROM innit.twitter_stream_user WHERE group_chat_id = '{chat_id}' AND user_name = '{user_name}"""
+LIST_ALL_USER = """SELECT user_name FROM innit.twitter_stream_user WHERE group_chat_id = '{chat_id}'"""
+DELETE_ALL_USER = """DELETE FROM innit.twitter_stream_user WHERE group_chat_id = '{chat_id}'"""

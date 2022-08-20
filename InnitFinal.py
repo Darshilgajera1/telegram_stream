@@ -6,7 +6,7 @@ import requests
 import json
 import os
 
-from constants import INSERT_TWITTER_USERNAME, CHECK_TWITTER_USERNAME, GET_ALL_USER
+from constants import INSERT_TWITTER_USERNAME, CHECK_TWITTER_USERNAME, GET_ALL_USER, GET_USER_CONFIG, DELETE_USER, LIST_ALL_USER, DELETE_ALL_USER
 from db_connection import db
 from dotenv import load_dotenv
 
@@ -119,6 +119,38 @@ def message_handler(update,context):
                         update.message.reply_text(f"Now you can track all the tweets of this user{user_messages}.")
                     else:
                         update.message.reply_text("Sorry, You already configure this Twitter handle")
+        elif user_messages.lower() == "/remove" or user_messages.startswith('/remove_'):
+            if user_messages.lower() == "/remove":
+                chat_id = update.message.chat_id
+                token_query = db.fetchall(GET_USER_CONFIG.format(chat_id=chat_id))
+                if token_query:
+                    str = ''
+                    for item in token_query:
+                        str += item[0] + ',' + '\n'
+                    update.message.reply_text(
+                        f"What Username do you want remove \n {str} \n You can remove with /remove + _username where username startswith @")
+                else:
+                    update.message.reply_text(f"You dont configured any username you can start with /start")
+            else:
+                data = user_messages.split('_')
+                user_name = data[1]
+                chat_id = update.message.chat_id
+                delete_one_user = db.fetchall(DELETE_USER.format(user_name=user_name, chat_id=chat_id))
+                update.message.reply_text(f"User handle {delete_one_user} is now unconfigured for this Group. \n Thanks")
+
+        elif user_messages.lower() == '/list':
+            chat_id = update.message.chat_id
+            list_query = db.fetchall(LIST_ALL_USER.format(chat_id=chat_id))
+            if list_query:
+                str = ''
+                for item in list_query:
+                    str += item[0] + ',' + '\n'
+                update.message.reply_text(f"All the list of username configured in this Group.\n {str} You can remove with /remove")
+            else:
+                update.message.reply_text(f"You dont configured any username you can start with /start")
+        elif user_messages.lower() == "/stop":
+            chat_id = update.message.chat_id
+            delete_query = db.fetchall(DELETE_ALL_USER.format(chat_id=chat_id))
         else:
             update.message.reply_text("Sorry! you can start with /start command.")
 
